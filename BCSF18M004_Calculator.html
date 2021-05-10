@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript Calculator</title>
+</head>
+<body>
+<fieldset style="background: darkgray; width: 300px; margin:auto" >
+<h1 style="text-align: center"> <font style="color: red">Javascript</font> <font style="color: blue">Calculator</font></h1>
+<div style="text-align: center">
+<input style="width: 200px" type="text" name="name" id="cal_textfield">
+    <br/><br/>
+    <button style="background: red; color: white" id="1" onmouseup="txtFieldFunction(this.id)"> 1</button>
+    <button style="background: red; color: white" id="2" onmouseup="txtFieldFunction(this.id)"> 2 </button>
+    <button style="background: red; color: white" id="3" onmouseup="txtFieldFunction(this.id)"> 3 </button>
+    <button style="background: red; color: white" id="+" onmouseup="txtFieldFunction(this.id)"> +</button>
+    <button style="background: red; color: white" id="-" onmouseup="txtFieldFunction(this.id)"> - </button>
+    <br/><br/>
+    <button style="background: red; color: white" id="4" onmouseup="txtFieldFunction(this.id)"> 4</button>
+    <button style="background: red; color: white" id="5" onmouseup="txtFieldFunction(this.id)"> 5 </button>
+    <button style="background: red; color: white" id="6" onmouseup="txtFieldFunction(this.id)"> 6 </button>
+    <button style="background: red; color: white" id="*" onmouseup="txtFieldFunction(this.id)"> * </button>
+    <button style="background: red; color: white" id="/" onmouseup="txtFieldFunction(this.id)"> / </button>
+    <br/><br/>
+    <button style="background: red; color: white" id="7" onmouseup="txtFieldFunction(this.id)"> 7</button>
+    <button style="background: red; color: white" id="8" onmouseup="txtFieldFunction(this.id)"> 8 </button>
+    <button style="background: red; color: white" id="9" onmouseup="txtFieldFunction(this.id)"> 9 </button>
+     <button style="background: red; color: white" id="0" onmouseup="txtFieldFunction(this.id)"> 0 </button>
+    <button style="background: red; color: white" id="." onmouseup="txtFieldFunction(this.id)"> . </button>
+    <br/><br/>
+    <button style="background: red; color: white" id="CLR" onmouseup="txtFieldFunction(this.id)">CLR</button>
+    <button style="background: red; color: white" id ="Backspace" onmouseup="back_space(this.id)">BackSpace</button>
+    <button style="background: blue; color: white" id="=" onmouseup="exp_evaluate(this.id)">=</button>
+</div>
+</fieldset>
+<script>
+    function add(op1,op2)
+    {
+        return op1+op2;
+    }
+    function subtract(op1,op2)
+    {
+        return op1- op2;
+    }
+    function multiply(op1,op2)
+    {
+        return op1 * op2;
+    }
+    function divide(op1,op2)
+    {
+        if(op2!=0)
+            return op1/op2;
+        else
+            return "Divide by zero Error: Infinity"
+    }
+    function txtFieldFunction(btn_id) {
+        if (btn_id=="=")
+        {
+            exp = document.getElementById("cal_textfield").value
+            get_operator_index(exp)
+            return;
+        }
+        if (btn_id=="CLR")
+        {
+            document.getElementById("cal_textfield").value = ""
+            return
+        }
+        document.getElementById("cal_textfield").value = document.getElementById("cal_textfield").value + btn_id
+    }
+    function back_space(btn_id){
+        var exp =document.getElementById("cal_textfield").value
+        exp = exp.slice(0,exp.length-1)
+        document.getElementById("cal_textfield").value =exp
+    }
+    function exp_evaluate(btn_id)
+    {
+        var exp = document.getElementById("cal_textfield").value
+        var len = exp.toString().length
+        var op1= "",operator="",op2 = ""
+        operator_index = get_operator_index(exp)
+        if(operator_index!=-1)
+        {
+            op1 = exp.slice(0, operator_index);
+            operator = exp[operator_index]
+            op2 = exp.slice(operator_index+1,len)
+            console.log(get_operator_index(op2))
+            if (get_operator_index(op2)!=-1)
+            {
+                var val = get_operator_index(op2)
+                op1 = exp.slice(0, operator_index+ val+1);
+                console.log(op1)
+                operator = exp[operator_index+val+1]
+                op2 = exp.slice(operator_index+val+1+1,len)
+            }
+        }
+        else if (operator_index==-1 && exp.length!=0)
+        {
+            if (!isNaN(parseFloat(exp)))
+            {
+                op1 = parseFloat(exp)
+            }
+        }
+        document.getElementById("cal_textfield").value= ""
+        var res= ""
+        if(op1.length!=0 && op2.length!=0)
+        {
+            if (operator=='+')
+            {
+               res = add(parseFloat(op1),parseFloat(op2))
+            }
+            else if(operator=='-')
+            {
+                res =subtract(parseFloat(op1),parseFloat(op2))
+            }
+            else if(operator=="*")
+            {
+                res = multiply(parseFloat(op1),parseFloat(op2))
+            }
+            else if(operator=="/")
+            {
+                res = divide(parseFloat(op1),parseFloat(op2))
+            }
+        }
+        else if(op1.length!=0 && op2.length==0)
+        {
+            if (operator.length==0)
+                res = op1
+            else
+                res = "Syntax Error"
+        }
+        else if(op1.length==0 && op2.length!=0)
+        {
+            if (operator=="/" && operator=="*")
+                res = "Syntax Error"
+            else
+                res = operator+ op2
+        }
+        else
+        {
+            document.getElementById("cal_textfield").value= "Syntax Error"
+        }
+        document.getElementById("cal_textfield").value=res
+    }
+    function get_operator_index(exp)
+    {
+        var operand = "+-*/";
+        var op_string_len =operand.length
+        var len = exp.toString().length
+        var flag = true
+        var index = 0, req_index = -1
+       for(i=0;i<len && flag ;i++)
+       {
+           for(j=0;j<op_string_len && flag ; j++)
+           {
+               if (exp[i]==operand[j])
+               {
+                   req_index = i;
+                   flag = false;
+               }
+           }
+       }
+       return req_index
+    }
+</script>
+</body>
+</html>
