@@ -1,2 +1,2 @@
 # JS-Calculator
-Web Engineering Lab 6 
+Web Engineering Lab 7
